@@ -1,0 +1,32 @@
+name: "Release Train"
+run-name: "${{ inputs.release-train }}: ${{ inputs.signal }}"
+"on":
+  workflow_dispatch:
+    inputs:
+      release-train:
+        description: "Name of the release train"
+        required: true
+        type: "string"
+      release-train-repository:
+        description: "Repository that is orchestrating the release train"
+        required: true
+        type: "string"
+      signal:
+        description: "Signal to send to the orchestrator"
+        options:
+        - "join"
+        - "ready"
+        required: true
+        type: "choice"
+permissions:
+  contents: "none"
+jobs:
+  send-signal:
+    name: "Send Signal"
+    runs-on: "ubuntu-latest"
+    steps:
+    - name: "Send Signal"
+      id: "send-signal"
+      env:
+        GH_TOKEN: "${{ secrets.ACTIONS_RELEASE_TOKEN }}"
+      run: "gh workflow run ${{ inputs.signal }} --repo ${{ inputs.release-train-repository }} --ref ${{ inputs.release-train }} --field repository=${{ github.repository }} --field run-attempt=${{ github.run_attempt }} --field run-id=${{ github.run_id }}"
