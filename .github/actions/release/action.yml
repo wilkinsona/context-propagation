@@ -18,8 +18,8 @@ runs:
     - name: Publish Artifacts
       if: ${{ inputs.action == 'publish-artifacts' }}
       shell: bash
-      run:  ./gradlew -PdeploymentRepository=$(pwd)/deployment-repository publishNebulaPublicationToDeploymentRepository
+      run:  ./gradlew -PdeploymentRepository=$(pwd)/deployment-repository -Prelease.scope=patch publishNebulaPublicationToDeploymentRepository
     - name: Test
       if: ${{ inputs.action == 'test' }}
       shell: bash
-      run: ./gradlew build
+      run: ./gradlew -Prelease.scope=patch build
